@@ -57,3 +57,47 @@ you can simple create a postgresql connection with by docker compose
 
 ```docker compose up```
 
+#### Initial Data
+
+To generate initial data, run the `create_initial_data` as below:
+
+```python manage.py runscript create_initial_data```
+
+
+#### Create ShopProducts View in Postgresql
+
+Run the below command:
+```
+-- View: public.shop_products
+
+-- DROP VIEW public.shop_products;
+
+CREATE OR REPLACE VIEW public.shop_products
+ AS
+ SELECT product.name,
+    product.description,
+    product.price,
+    product.discount,
+    product.inventory,
+    product.shop_id
+   FROM shop_product product
+  WHERE (product.shop_id IN ( SELECT shop_shop.id
+           FROM shop_shop
+          WHERE shop_shop.manager_id = (( SELECT authtoken_token.user_id
+                   FROM authtoken_token
+                  WHERE authtoken_token.key::text = regexp_replace(current_setting('request.headers'::text)::json ->> 'authorization'::text, 'Token '::text, ''::text))))) AND NOT product.is_archived;
+
+ALTER TABLE public.shop_products
+    OWNER TO benchmark;
+
+GRANT ALL ON TABLE public.shop_products TO benchmark;
+GRANT SELECT ON TABLE public.shop_products TO postgrest;
+```
+
+#### Test the app
+
+Now you can run some tests. so run the `gunicorn` and `postgrest` servers:
+
+```
+gunicorn
+```

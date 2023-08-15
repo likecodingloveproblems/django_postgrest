@@ -1,9 +1,8 @@
 from django.db.models import QuerySet
 
+from utils.querysets import ArchivableQuerySet
 
-class ProductQuerySet(QuerySet):
-    def available(self):
-        return self.filter(is_archived=False)
 
+class ProductQuerySet(ArchivableQuerySet, QuerySet):
     def for_shop(self, shop):
         return self.filter(shop=shop)
