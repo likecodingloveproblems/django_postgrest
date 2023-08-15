@@ -274,3 +274,4 @@ dump.rdb
 django_postgrest/media/
 
 .pytest_cache/
+.vscode/
