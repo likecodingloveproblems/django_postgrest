@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from shop.querysets import ProductQuerySet
 from utils.models import Archivable
 
 
@@ -24,6 +25,8 @@ class Product(Archivable, models.Model):
     price = models.FloatField(_("price"))
     discount = models.FloatField(_("discount"))
     inventory = models.IntegerField(_("inventory"))
+
+    objects = ProductQuerySet.as_manager()
 
     class Meta:
         verbose_name = _("Product")
