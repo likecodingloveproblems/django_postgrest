@@ -1,4 +1,4 @@
-# Django-Postgrest
+# Django Postgrest
 
 This repo, is created to demonstrate a solution to slow and heavily pulled endpoints for a production django project
 
@@ -48,3 +48,12 @@ Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readt
 ## Deployment
 
 The following details how to deploy this application.
+
+
+## Setup locally
+#### Postgresql
+you need a postgresql-15 locally.
+you can simple create a postgresql connection with by docker compose
+
+```docker compose up```
+
