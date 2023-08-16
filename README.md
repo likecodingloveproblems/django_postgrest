@@ -96,8 +96,94 @@ GRANT SELECT ON TABLE public.shop_products TO postgrest;
 
 #### Test the app
 
-Now you can run some tests. so run the `gunicorn` and `postgrest` servers:
+Now you can run some tests. so run the `gunicorn` with 4 worker:
 
 ```
-gunicorn
+gunicorn config.wsgi:application --workers 4 --bind 0.0.0.0:8000 --log-level critical
+```
+
+And `Postgrest`:
+```postgrest ./postgrest.conf```
+
+### Load Test
+The load testing is done with apache benchmark `ab`, with 100 concurrency and totally 10000 requests.
+To run the test on gunicorn run the below command:
+```ab ```
+
+##### Gunicorn results:
+```
+Server Software:        gunicorn
+Server Hostname:        localhost
+Server Port:            8000
+
+Document Path:          /shop/2001/products/
+Document Length:        107146 bytes
+
+Concurrency Level:      100
+Time taken for tests:   37.131 seconds
+Complete requests:      10000
+Failed requests:        0
+Total transferred:      1075100000 bytes
+HTML transferred:       1071460000 bytes
+Requests per second:    269.32 [#/sec] (mean)
+Time per request:       371.307 [ms] (mean)
+Time per request:       3.713 [ms] (mean, across all concurrent requests)
+Transfer rate:          28275.88 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.2      0       3
+Processing:    18  369  30.7    364     498
+Waiting:       16  369  30.7    364     498
+Total:         21  369  30.6    364     498
+
+Percentage of the requests served within a certain time (ms)
+  50%    364
+  66%    372
+  75%    380
+  80%    386
+  90%    406
+  95%    428
+  98%    445
+  99%    451
+ 100%    498 (longest request)
+```
+
+##### Postgrest results:
+```
+Server Software:        postgrest/11.1.0
+Server Hostname:        localhost
+Server Port:            3000
+
+Document Path:          /shop_products?select=name,description,price,discount,inventory&shop_id=eq.2001
+Document Length:        107743 bytes
+
+Concurrency Level:      100
+Time taken for tests:   10.050 seconds
+Complete requests:      10000
+Failed requests:        0
+Total transferred:      1080030000 bytes
+HTML transferred:       1077430000 bytes
+Requests per second:    995.02 [#/sec] (mean)
+Time per request:       100.500 [ms] (mean)
+Time per request:       1.005 [ms] (mean, across all concurrent requests)
+Transfer rate:          104946.91 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.4      0      16
+Processing:     4  100  82.6     77     881
+Waiting:        2   98  82.5     75     880
+Total:          5  100  82.6     77     881
+
+Percentage of the requests served within a certain time (ms)
+  50%     77
+  66%    105
+  75%    130
+  80%    149
+  90%    205
+  95%    264
+  98%    340
+  99%    412
+ 100%    881 (longest request)
 ```
